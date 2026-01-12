@@ -8,9 +8,7 @@
     "start": "node index.js"
   },
   "jest": {
-    "testEnvironment": "node",
-    "silent": true,
-    "testTimeout": 30000
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"]
   },
   "author": "",
   "license": "ISC",

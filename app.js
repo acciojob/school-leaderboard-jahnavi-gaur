@@ -1,25 +1,3 @@
-// ===== Cypress polyfill for Jest =====
-if (process.env.NODE_ENV !== "production") {
-  const axios = require("axios");
-
-  global.cy = {
-    request: async ({ url, method = "GET" }) => {
-      const response = await axios({
-        method,
-        url,
-        validateStatus: () => true,
-      });
-
-      return {
-        status: response.status,
-        body: response.data,
-      };
-    },
-  };
-}
-
-
-
 const express = require("express");
 const app = express();
 
