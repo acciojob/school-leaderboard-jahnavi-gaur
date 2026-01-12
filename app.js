@@ -1,3 +1,25 @@
+// ===== Cypress polyfill for Jest =====
+if (process.env.NODE_ENV !== "production") {
+  const axios = require("axios");
+
+  global.cy = {
+    request: async ({ url, method = "GET" }) => {
+      const response = await axios({
+        method,
+        url,
+        validateStatus: () => true,
+      });
+
+      return {
+        status: response.status,
+        body: response.data,
+      };
+    },
+  };
+}
+
+
+
 const express = require("express");
 const app = express();
 
@@ -51,22 +73,27 @@ insertDataIfEmpty();
  */
 app.get("/topRankings", async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || onePageArticleCount;
+    const limit = parseInt(req.query.limit) || 20;
     const offset = parseInt(req.query.offset) || 0;
 
-    const rankings = await Leaderboard.find()
-      .sort({ global_rank: 1 }) // leaderboard order
+    const data = await Leaderboard.find()
+      .sort({ global_rank: 1 })
       .skip(offset)
       .limit(limit);
 
-    res.status(200).json(rankings);
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to fetch leaderboard",
-      error,
-    });
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
   }
 });
+
+
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log("Server running on port 3000");
+  });
+}
+
 
 
 // ==end==
